@@ -5,7 +5,7 @@ require "pokereval/version"
 
 Gem::Specification.new do |spec|
   spec.name          = "pokereval"
-  spec.version       = Pokereval::VERSION
+  spec.version       = PokerEval::VERSION
   spec.authors       = ["Laith Shadeed"]
   spec.email         = ["laith.shadeed@gmail.com"]
 

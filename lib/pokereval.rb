@@ -1,4 +1,5 @@
 require "pokereval/version"
+require "pokereval/hand"
 
 module PokerEval
   class << self
