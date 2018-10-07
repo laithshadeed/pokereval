@@ -1,0 +1,14 @@
+---
+engines:
+  bundler-audit:
+    enabled: false
+  duplication:
+    enabled: true
+    config:
+      languages:
+        - ruby
+ratings:
+  paths:
+    - "**.rb"
+  exclude_paths:
+    - bin/
