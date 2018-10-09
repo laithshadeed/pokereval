@@ -2,7 +2,7 @@ module PokerEval
   class Hand
     include Comparable
 
-    attr_accessor :hand, :name, :rank, :weight
+    attr_accessor :hand, :hand_str, :name, :rank, :weight
 
     HAND_VALUES = %i[
       HIGH_CARD
@@ -22,6 +22,7 @@ module PokerEval
     end
 
     def initialize(str)
+      self.hand_str = str
       self.hand = str
       self.rank = hand
       self.weight = rank
@@ -33,56 +34,49 @@ module PokerEval
     end
 
     def to_s
-      "<hand [#{print}], '#{@name}'>"
-    end
-
-    def print
-      @hand.map { |c| "#{c[:rank]}#{c[:suite]}" }
-        .join(' ')
+      "<hand [#{@hand_str}], '#{@name}'>"
     end
 
     def hand=(str)
       @hand = str
         .upcase.split(' ')
         .map(&method(:parse_card))
-        .sort! { |a, b| a[:value] <=> b[:value] }
+        .sort_by! { |c| [c[:value], c[:suite]] }
     end
 
     def weight=(rank)
-      @weight = HAND_VALUES.index(rank[0])
+      @weight = HAND_VALUES.index(rank)
     end
 
     def name=(rank)
-      @name = rank[0].to_s.split('_').collect(&:capitalize).join(' ')
+      @name = rank.to_s.split('_').collect(&:capitalize).join(' ')
     end
 
     def rank=(hand)
-      (r5, r4, r3, r2, r1) = hand.map { |c| c[:rank] }
-
+      (f5, f4, f3, f2, f1) = hand.map { |c| c[:face] }
+      count_hash = [f5, f4, f3, f2, f1].each_with_object(Hash.new(0)) { |o, h| h[o] += 1 }
       @rank =
         if straight?
-          r = r1 == :A && r2 == 5 ? 5 : r1
           if flush?
-            r == :A ? [:ROYAL_FLUSH] : [:STRAIGHT_FLUSH, r]
+            f1 == :A && f2 == :K ? :ROYAL_FLUSH : :STRAIGHT_FLUSH
           else
-            [:STRAIGHT, r]
+            :STRAIGHT
           end
-        elsif r1 == r2 && r2 == r3 && r3 == r4
-          [:FOUR_OF_A_KIND, r1, r5]
-        elsif r1 == r2 && r2 == r3 && r4 == r5
-          [:FULL_HOUSE, r1, r4]
-        elsif r1 == r2 && r3 == r4 && r4 == r5
-          [:FULL_HOUSE, r3, r1]
-        elsif r1 && r2 && r2 != r3 && r3 != r4 && r4 != r5 && flush?
-          [:FLUSH, r1, r2, r3, r4, r5]
-        elsif r1 == r2 && r2 == r3
-          [:THREE_OF_A_KIND, r1, r4, r5]
-        elsif r1 == r2 && r3 == r4
-          [:TWO_PAIR, r1, r3, r5]
-        elsif r1 == r2
-          [:ONE_PAIR, r1, r3, r4, r5]
+        elsif count_hash.map { |k, v| k if v == 4 }.compact.count == 1
+          :FOUR_OF_A_KIND
+        elsif count_hash.map { |k, v| k if v == 3 }.compact.count == 1 &&
+              count_hash.map { |k, v| k if v == 2 }.compact.count == 1
+          :FULL_HOUSE
+        elsif f1 != f2 && f2 != f3 && f3 != f4 && f4 != f5 && flush?
+          :FLUSH
+        elsif count_hash.map { |k, v| k if v == 3 }.compact.count == 1
+          :THREE_OF_A_KIND
+        elsif count_hash.map { |k, v| k if v == 2 }.compact.count == 2
+          :TWO_PAIR
+        elsif count_hash.map { |k, v| k if v == 2 }.compact.count == 1
+          :ONE_PAIR
         else
-          [:HIGH_CARD, r1, r2, r3, r4, r5]
+          :HIGH_CARD
         end
     end
 
@@ -97,9 +91,13 @@ module PokerEval
       s1 == s2 && s2 == s3 && s3 == s4 && s4 == s5
     end
 
+    def duplicate_count
+
+    end
+
     def parse_card(str)
       (val, suite) = str.each_char.to_a
-      {rank: parse_rank(val), suite: suite.to_sym, value: parse_value(val)}
+      {face: parse_rank(val), suite: suite.to_sym, value: parse_value(val)}
     end
 
     def parse_rank(str)
