@@ -2,6 +2,7 @@
 
 [![Build Status](https://secure.travis-ci.org/laithshadeed/pokereval.svg?branch=master)](http://travis-ci.org/laithshadeed/pokereval)
 [![Code Climate](https://codeclimate.com/github/laithshadeed/pokereval/badges/gpa.svg)](https://codeclimate.com/github/laithshadeed/pokereval)
+[![Coverage Status](https://coveralls.io/repos/github/laithshadeed/pokereval/badge.svg?branch=master)](https://coveralls.io/github/laithshadeed/pokereval?branch=master)
 
 Pocker evaluator heavily inspired by [@wojtekmach
 Elixir's implementation](https://github.com/wojtekmach/poker_elixir) and [Cactus Kev's algorithm](http://suffe.cool/poker/evaluator.html)
