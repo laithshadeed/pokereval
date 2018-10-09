@@ -71,4 +71,31 @@ RSpec.describe PokerEval do
         "<hand [TS JS QS KS AS], 'Royal Flush'>"
       ].join(' ')
   end
+
+  scenarios = [
+    {name: 'Straight Flush',  str1: '5S 6S 7S 8S 9S', str2: '2D 3D 4D 5D 6D' },
+    {name: 'Four Of A Kind',  str1: '6H QC QD QH QS', str2: '2C 8C 8D 8H 8S' },
+    {name: 'Full House',      str1: '6C 6H 6S KC KH', str2: '4C 4D 2D 2H 2S' },
+    {name: 'Flush',           str1: '3S 5S 7S 8S JS', str2: '2H 3H 5H 6H 8H' },
+    {name: 'Straight',        str1: '7S 8H 9C TD JC', str2: 'AH 2S 3D 4C 5S' },
+    {name: 'Three Of A Kind', str1: '4C JH 9C 9H 9S', str2: '6D QC 2C 2D 2H' },
+    {name: 'Two Pair',        str1: 'QD QS 9D 9S TH', str2: 'AD 2C 2H JH JS' },
+    {name: 'One Pair',        str1: '5D 9H JS KC KS', str2: '5H 7D TS 8D 8D' },
+    {name: 'High Card',       str1: '2S 4H 5D QH AS', str2: '3S 5D 6H 8H TD' }
+  ]
+
+  scenarios.each do |s|
+    it "should sort hands with same '#{s[:name]}' rank" do
+      hands = [
+        PokerEval::Hand.from_string(s[:str1]),
+        PokerEval::Hand.from_string(s[:str2])
+      ]
+
+      expect(hands.sort.join(' '))
+        .to eq [
+          "<hand [#{s[:str2]}], '#{s[:name]}'>",
+          "<hand [#{s[:str1]}], '#{s[:name]}'>"
+        ].join(' ')
+    end
+  end
 end

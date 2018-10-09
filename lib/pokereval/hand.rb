@@ -4,19 +4,6 @@ module PokerEval
 
     attr_accessor :hand, :hand_str, :name, :rank, :weight
 
-    HAND_VALUES = %i[
-      HIGH_CARD
-      ONE_PAIR
-      TWO_PAIR
-      THREE_OF_A_KIND
-      STRAIGHT
-      FLUSH
-      FULL_HOUSE
-      FOUR_OF_A_KIND
-      STRAIGHT_FLUSH
-      ROYAL_FLUSH
-    ].freeze
-
     def self.from_string(str)
       Hand.new(str)
     end
@@ -44,8 +31,27 @@ module PokerEval
         .sort_by! { |c| [c[:value], c[:suite]] }
     end
 
+    # @TODO:
+    # - This function does not always yield correct weight when same rank here a broken example:
+    #   6H 5H 5S 9C 9H && AD 2C 2H JH JS
+    # - It has very high Cognitive Complexity
+    #
+    # I'm relying on Cactus Kev's table http://suffe.cool/poker/7462.html to double check correctness
+    # Possible solution to use Cactus Kev's binary scheme or to use prime number multiplication
     def weight=(rank)
-      @weight = HAND_VALUES.index(rank)
+      h = @hand.map { |c| c[:value] }.each_with_object(Hash.new(0)) { |o, hs| hs[o] += 1 }
+      @weight =
+        case rank
+        when :ROYAL_FLUSH, :STRAIGHT_FLUSH then 8000 + @hand.map { |c| c[:value] }.inject(&:+)
+        when :FOUR_OF_A_KIND then 7000 + 15 * 4 * h.key(4) + h.key(1)
+        when :FULL_HOUSE then 6000 + 15 * 3 * h.key(3) + h.key(2)
+        when :FLUSH then 5000 + @hand.map { |c| c[:value] }.inject(&:+)
+        when :STRAIGHT then 4000 + @hand.map { |c| c[:value] }.inject(&:+)
+        when :THREE_OF_A_KIND then 3000 + 15 * 3 * h.key(3) + h.map { |k, v| k if v == 1 }.compact.inject(&:+)
+        when :TWO_PAIR then 2000 + 15 * 2 * h.map { |k, v| k if v == 2 }.compact.inject(&:+) + h.key(1)
+        when :ONE_PAIR then 1000 + 15 * 2 * h.key(2) + h.map { |k, v| k if v == 1 }.compact.inject(&:+)
+        when :HIGH_CARD then @hand.map { |c| c[:value] }.inject(&:+)
+        end
     end
 
     def name=(rank)
@@ -89,10 +95,6 @@ module PokerEval
     def flush?
       (s5, s4, s3, s2, s1) = @hand.map { |c| c[:suite] }
       s1 == s2 && s2 == s3 && s3 == s4 && s4 == s5
-    end
-
-    def duplicate_count
-
     end
 
     def parse_card(str)
