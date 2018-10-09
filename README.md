@@ -3,7 +3,8 @@
 [![Build Status](https://secure.travis-ci.org/laithshadeed/pokereval.svg?branch=master)](http://travis-ci.org/laithshadeed/pokereval)
 [![Code Climate](https://codeclimate.com/github/laithshadeed/pokereval/badges/gpa.svg)](https://codeclimate.com/github/laithshadeed/pokereval)
 
-Pocker evaluator based on [Cactus Kev's algorithm](http://suffe.cool/poker/evaluator.html)
+Pocker evaluator heavily inspired by [@wojtekmach
+Elixir's implementation](https://github.com/wojtekmach/poker_elixir) and [Cactus Kev's algorithm](http://suffe.cool/poker/evaluator.html)
 
 ## Usage
 
@@ -27,6 +28,7 @@ $ rake
 
 ## Links
 
+- [Elixir's implementation](https://github.com/wojtekmach/poker_elixir)
 - [List of poker hands Wiki](https://en.wikipedia.org/wiki/List_of_poker_hands)
 - [Cactus Kev's Poker Hand Evaluator](http://suffe.cool/poker/evaluator.html)
 - [Kev's poker table](http://suffe.cool/poker/7462.html)
