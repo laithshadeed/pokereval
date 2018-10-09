@@ -10,12 +10,14 @@ Elixir's implementation](https://github.com/wojtekmach/poker_elixir) and [Cactus
 
 ```
 $ ./bin/pokereval '4D 4D 4D 7H 8D'
+<hand [4D 4D 4D 7H 8D], 'Three Of A Kind'>
 ```
 
 OR
 
 ```
 $ docker run laithshadeed/pokereval:0.1 '4D 4D 4D 7H 8D'
+<hand [4D 4D 4D 7H 8D], 'Three Of A Kind'>
 ```
 ---
 

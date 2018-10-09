@@ -4,7 +4,7 @@ require "pokereval/hand"
 module PokerEval
   class << self
     def run(str)
-      puts str
+      puts Hand.from_string(str)
     end
   end
 end
