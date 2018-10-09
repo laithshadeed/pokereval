@@ -1,4 +1,8 @@
 require "bundler/setup"
+
+require 'coveralls'
+Coveralls.wear!
+
 require "pokereval"
 
 RSpec.configure do |config|
